@@ -70,7 +70,7 @@ export default function DayView() {
 
       {/* All-day events section */}
       {allDayEvents.length > 0 && (
-        <div className="border-b border-zinc-300 px-6 py-3">
+        <div className="border-b border-zinc-300 px-6 py-3 shrink-0 max-h-64 overflow-y-auto">
           <div className="text-xs font-semibold mb-2">All Day</div>
           <div className="space-y-1">
             {allDayEvents.map((event) => (
