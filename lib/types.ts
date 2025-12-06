@@ -6,10 +6,18 @@ export type EventType =
   | 'deadline'
   | 'meeting';
 
+export type EventSubtype =
+  | 'daily-standup'
+  | 'sprint-planning'
+  | 'product-launch'
+  | 'planning'
+  | 'all-hands';
+
 export interface CalendarEvent {
   id: string;
   title: string;
   type: EventType;
+  subtype?: EventSubtype; // Optional subtype for meetings, deadlines, and company events
   startTime: Date; // Stored in UTC
   endTime: Date; // Stored in UTC
   description?: string;
@@ -24,6 +32,21 @@ export interface CalendarEvent {
     exceptions?: string[]; // ISO date strings of excluded dates (e.g., '2024-01-15')
   };
 }
+
+// Mapping of event types to their possible subtypes
+export const EVENT_SUBTYPES: Record<'meeting' | 'deadline' | 'company-event', { value: EventSubtype; label: string }[]> = {
+  'meeting': [
+    { value: 'daily-standup', label: 'Daily Standup' },
+    { value: 'sprint-planning', label: 'Sprint Planning' },
+  ],
+  'deadline': [
+    { value: 'product-launch', label: 'Product Launch' },
+  ],
+  'company-event': [
+    { value: 'planning', label: 'Planning' },
+    { value: 'all-hands', label: 'All-Hands' },
+  ],
+};
 
 export type ViewMode = 'month' | 'week' | 'day';
 
@@ -59,9 +82,9 @@ export const EVENT_COLORS: Record<EventType, { bg: string; bgHover: string; text
     border: 'border-red-300',
   },
   'meeting': {
-    bg: 'bg-gray-100',
-    bgHover: 'hover:bg-gray-200',
-    text: 'text-gray-900',
-    border: 'border-gray-300',
+    bg: 'bg-zinc-100',
+    bgHover: 'hover:bg-zinc-200',
+    text: 'text-zinc-900',
+    border: 'border-zinc-300',
   },
 };

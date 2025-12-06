@@ -186,14 +186,14 @@ export default function EditEventDialog() {
                   <Dialog.Title className="flex items-center gap-2 text-lg font-semibold">
                     Edit Event
                     {selectedEvent.recurrence && (
-                      <span className="flex items-center gap-1 rounded-full bg-gray-100 px-2 py-1 text-xs font-medium">
+                      <span className="flex items-center gap-1 rounded-full bg-zinc-100 px-2 py-1 text-xs font-medium">
                         <LoopIcon className="h-3 w-3" />
                         Recurring
                       </span>
                     )}
                   </Dialog.Title>
                   <Dialog.Close asChild>
-                    <button className="rounded-md p-1 hover:bg-gray-100" aria-label="Close">
+                    <button className="rounded-md p-1 hover:bg-zinc-100" aria-label="Close">
                       <Cross2Icon className="h-5 w-5" />
                     </button>
                   </Dialog.Close>
@@ -211,7 +211,7 @@ export default function EditEventDialog() {
                 required
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 placeholder="e.g., Team Standup"
               />
             </div>
@@ -228,7 +228,7 @@ export default function EditEventDialog() {
                 onChange={(e) =>
                   setFormData({ ...formData, type: e.target.value as EventType })
                 }
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               >
                 <option value="meeting">Meeting</option>
                 <option value="deadline">Deadline</option>
@@ -253,7 +253,7 @@ export default function EditEventDialog() {
                 >
                   <Select.Trigger
                     id="person"
-                    className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 flex items-center justify-between"
+                    className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 flex items-center justify-between"
                   >
                     <Select.Value placeholder="Select person" />
                     <Select.Icon>
@@ -261,67 +261,67 @@ export default function EditEventDialog() {
                     </Select.Icon>
                   </Select.Trigger>
                   <Select.Portal>
-                    <Select.Content className="min-w-(--radix-select-trigger-width) overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg z-50">
+                    <Select.Content className="min-w-(--radix-select-trigger-width) overflow-hidden rounded-lg border border-zinc-300 bg-white shadow-lg z-50">
                       <Select.Viewport className="p-1">
                         <Select.Group>
-                          <Select.Label className="px-4 py-2 text-xs font-semibold text-gray-500">
+                          <Select.Label className="px-4 py-2 text-xs font-semibold text-zinc-500">
                             Engineering
                           </Select.Label>
                           <Select.Item
                             value="Sarah Chen"
-                            className="relative flex cursor-pointer select-none items-center rounded-md px-4 py-2 text-sm outline-none data-highlighted:bg-gray-100 data-[state=checked]:bg-gray-200"
+                            className="relative flex cursor-pointer select-none items-center rounded-md px-4 py-2 text-sm outline-none data-highlighted:bg-zinc-100 data-[state=checked]:bg-zinc-200"
                           >
                             <Select.ItemText>Sarah Chen</Select.ItemText>
                           </Select.Item>
                           <Select.Item
                             value="Alex Kim"
-                            className="relative flex cursor-pointer select-none items-center rounded-md px-4 py-2 text-sm outline-none data-highlighted:bg-gray-100 data-[state=checked]:bg-gray-200"
+                            className="relative flex cursor-pointer select-none items-center rounded-md px-4 py-2 text-sm outline-none data-highlighted:bg-zinc-100 data-[state=checked]:bg-zinc-200"
                           >
                             <Select.ItemText>Alex Kim</Select.ItemText>
                           </Select.Item>
                           <Select.Item
                             value="Jordan Lee"
-                            className="relative flex cursor-pointer select-none items-center rounded-md px-4 py-2 text-sm outline-none data-highlighted:bg-gray-100 data-[state=checked]:bg-gray-200"
+                            className="relative flex cursor-pointer select-none items-center rounded-md px-4 py-2 text-sm outline-none data-highlighted:bg-zinc-100 data-[state=checked]:bg-zinc-200"
                           >
                             <Select.ItemText>Jordan Lee</Select.ItemText>
                           </Select.Item>
                         </Select.Group>
 
-                        <Select.Separator className="my-1 h-px bg-gray-200" />
+                        <Select.Separator className="my-1 h-px bg-zinc-200" />
 
                         <Select.Group>
-                          <Select.Label className="px-4 py-2 text-xs font-semibold text-gray-500">
+                          <Select.Label className="px-4 py-2 text-xs font-semibold text-zinc-500">
                             Operations
                           </Select.Label>
                           <Select.Item
                             value="Emma Wilson"
-                            className="relative flex cursor-pointer select-none items-center rounded-md px-4 py-2 text-sm outline-none data-highlighted:bg-gray-100 data-[state=checked]:bg-gray-200"
+                            className="relative flex cursor-pointer select-none items-center rounded-md px-4 py-2 text-sm outline-none data-highlighted:bg-zinc-100 data-[state=checked]:bg-zinc-200"
                           >
                             <Select.ItemText>Emma Wilson</Select.ItemText>
                           </Select.Item>
                           <Select.Item
                             value="Marcus Rodriguez"
-                            className="relative flex cursor-pointer select-none items-center rounded-md px-4 py-2 text-sm outline-none data-highlighted:bg-gray-100 data-[state=checked]:bg-gray-200"
+                            className="relative flex cursor-pointer select-none items-center rounded-md px-4 py-2 text-sm outline-none data-highlighted:bg-zinc-100 data-[state=checked]:bg-zinc-200"
                           >
                             <Select.ItemText>Marcus Rodriguez</Select.ItemText>
                           </Select.Item>
                         </Select.Group>
 
-                        <Select.Separator className="my-1 h-px bg-gray-200" />
+                        <Select.Separator className="my-1 h-px bg-zinc-200" />
 
                         <Select.Group>
-                          <Select.Label className="px-4 py-2 text-xs font-semibold text-gray-500">
+                          <Select.Label className="px-4 py-2 text-xs font-semibold text-zinc-500">
                             Design
                           </Select.Label>
                           <Select.Item
                             value="Riley Patel"
-                            className="relative flex cursor-pointer select-none items-center rounded-md px-4 py-2 text-sm outline-none data-highlighted:bg-gray-100 data-[state=checked]:bg-gray-200"
+                            className="relative flex cursor-pointer select-none items-center rounded-md px-4 py-2 text-sm outline-none data-highlighted:bg-zinc-100 data-[state=checked]:bg-zinc-200"
                           >
                             <Select.ItemText>Riley Patel</Select.ItemText>
                           </Select.Item>
                           <Select.Item
                             value="Taylor Morgan"
-                            className="relative flex cursor-pointer select-none items-center rounded-md px-4 py-2 text-sm outline-none data-highlighted:bg-gray-100 data-[state=checked]:bg-gray-200"
+                            className="relative flex cursor-pointer select-none items-center rounded-md px-4 py-2 text-sm outline-none data-highlighted:bg-zinc-100 data-[state=checked]:bg-zinc-200"
                           >
                             <Select.ItemText>Taylor Morgan</Select.ItemText>
                           </Select.Item>
@@ -343,7 +343,7 @@ export default function EditEventDialog() {
                   setIsTransitioning(true);
                   setFormData({ ...formData, isAllDay: e.target.checked });
                 }}
-                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                className="h-4 w-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500"
               />
               <label htmlFor="allDay" className="text-sm font-medium">
                 All day event
@@ -364,7 +364,7 @@ export default function EditEventDialog() {
                     required
                     value={formData.startDate}
                     onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                    className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
                 {!formData.isAllDay && (
@@ -378,7 +378,7 @@ export default function EditEventDialog() {
                       required
                       value={formData.startTime}
                       onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
-                      className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
                   </div>
                 )}
@@ -395,7 +395,7 @@ export default function EditEventDialog() {
                     id="endDate"
                     value={formData.endDate}
                     onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                    className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
                 {!formData.isAllDay && (
@@ -409,7 +409,7 @@ export default function EditEventDialog() {
                       required
                       value={formData.endTime}
                       onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
-                      className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
                   </div>
                 )}
@@ -426,7 +426,7 @@ export default function EditEventDialog() {
                 rows={3}
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
 
@@ -443,7 +443,7 @@ export default function EditEventDialog() {
                 <Dialog.Close asChild>
                   <button
                     type="button"
-                    className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-100"
+                    className="rounded-md border border-zinc-300 px-4 py-2 text-sm font-medium hover:bg-zinc-100"
                   >
                     Cancel
                   </button>
@@ -452,7 +452,7 @@ export default function EditEventDialog() {
                   type="submit"
                   className="rounded-md bg-black/80 px-4 py-2 text-sm font-medium text-white hover:bg-black/70"
                 >
-                  Save Changes
+                  Save
                 </button>
               </div>
             </div>
@@ -471,19 +471,19 @@ export default function EditEventDialog() {
                 <div className="space-y-2">
                   <button
                     onClick={handleDeleteThisOnly}
-                    className="w-full rounded-md border border-gray-300 px-4 py-3 text-sm font-medium hover:bg-gray-100 text-left"
+                    className="w-full rounded-md border border-zinc-300 px-4 py-3 text-sm font-medium hover:bg-zinc-100 text-left"
                   >
                     Delete this event only
                   </button>
                   <button
                     onClick={handleDeleteAll}
-                    className="w-full rounded-md border border-gray-300 px-4 py-3 text-sm font-medium hover:bg-gray-100 text-left"
+                    className="w-full rounded-md border border-zinc-300 px-4 py-3 text-sm font-medium hover:bg-zinc-100 text-left"
                   >
                     Delete all of these events
                   </button>
                   <button
                     onClick={handleCancelDelete}
-                    className="w-full flex gap-2 items-center rounded-md border border-gray-300 bg-gray-100 px-4 py-3 text-sm font-medium hover:bg-gray-100 text-left"
+                    className="w-full flex gap-2 items-center rounded-md border border-zinc-300 bg-zinc-100 px-4 py-3 text-sm font-medium hover:bg-zinc-100 text-left"
                   >
                     <ArrowLeftIcon /> Go Back
                   </button>

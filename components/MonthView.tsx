@@ -32,9 +32,9 @@ export default function MonthView() {
   return (
     <div className="flex h-full flex-col">
       {/* Week day headers */}
-      <div className="grid grid-cols-7 border-b border-gray-200">
+      <div className="grid grid-cols-7 border-b border-zinc-300">
         {weekDays.map((day) => (
-          <div key={day} className="border-r border-gray-200 p-2 text-center text-xs font-semibold last:border-r-0">
+          <div key={day} className="border-r border-zinc-300 p-2 text-center text-xs font-semibold last:border-r-0">
             {day}
           </div>
         ))}
@@ -66,8 +66,8 @@ export default function MonthView() {
                     <div
                       key={day.toISOString()}
                       onClick={handleDayClick}
-                      className={`relative border-b border-r border-gray-200 p-2 last:border-r-0 overflow-hidden cursor-pointer hover:bg-gray-50 transition-colors ${
-                        isCurrentMonth ? 'bg-white' : 'bg-gray-100'
+                      className={`relative border-b border-r border-zinc-300 p-2 last:border-r-0 overflow-hidden cursor-pointer hover:bg-zinc-50 transition-colors ${
+                        isCurrentMonth ? 'bg-white' : 'bg-zinc-100'
                       }`}
                     >
                       {/* Date number */}
@@ -120,7 +120,7 @@ const EventPill = forwardRef<HTMLButtonElement, { event: CalendarEvent }>(
         ref={ref}
         type="button"
         {...props}
-        className={`group relative w-full truncate rounded px-1.5 py-0.5 text-left text-xs font-medium transition-all ${colors.bg} ${colors.bgHover} ${colors.text}`}
+        className={`group relative w-full truncate rounded px-1.5 py-0.5 text-left text-xs transition-all ${colors.bg} ${colors.bgHover} ${colors.text}`}
         title={event.title}
       >
         <span className="flex items-center gap-1">

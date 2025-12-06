@@ -16,6 +16,7 @@ export const MOCK_EVENTS: CalendarEvent[] = [
     id: 'standup',
     title: 'Daily Standup',
     type: 'meeting',
+    subtype: 'daily-standup',
     startTime: utc(2025, 11, 1, 9, 0), // Dec 1, 2025, 9:00 AM UTC
     endTime: utc(2025, 11, 1, 9, 15),
     description: 'Daily team sync',
@@ -29,6 +30,7 @@ export const MOCK_EVENTS: CalendarEvent[] = [
     id: 'all-hands',
     title: 'All-Hands Meeting',
     type: 'company-event',
+    subtype: 'all-hands',
     startTime: utc(2025, 11, 1, 10, 0), // Dec 1 (Monday), 10:00 AM UTC
     endTime: utc(2025, 11, 1, 11, 0),
     description: 'Weekly company-wide meeting',
@@ -63,9 +65,11 @@ export const MOCK_EVENTS: CalendarEvent[] = [
     id: 'product-launch',
     title: 'Product Launch Deadline',
     type: 'deadline',
+    subtype: 'product-launch',
     startTime: utc(2025, 11, 20, 17, 0), // Dec 20 (Friday), 5:00 PM UTC
     endTime: utc(2025, 11, 20, 17, 0),
     description: 'Final deadline for Q4 product launch',
+    isAllDay: true,
   },
   // Emma's PTO (2 full days)
   {
@@ -125,6 +129,7 @@ export const MOCK_EVENTS: CalendarEvent[] = [
     id: 'q1-planning',
     title: 'Q1 2026 Planning',
     type: 'company-event',
+    subtype: 'planning',
     startTime: utc(2025, 11, 10, 14, 0), // Dec 10, 2:00 PM UTC
     endTime: utc(2025, 11, 10, 16, 0),
     description: 'Strategic planning for Q1 2026',
@@ -142,6 +147,7 @@ export const MOCK_EVENTS: CalendarEvent[] = [
     id: 'sprint-planning',
     title: 'Sprint Planning',
     type: 'meeting',
+    subtype: 'sprint-planning',
     startTime: utc(2025, 11, 9, 10, 0), // Dec 9, 10:00 AM UTC
     endTime: utc(2025, 11, 9, 12, 0),
     description: 'Plan next sprint',

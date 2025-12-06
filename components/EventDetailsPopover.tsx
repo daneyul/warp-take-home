@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useAtom } from 'jotai';
 import { eventsAtom, selectedEventAtom } from '@/lib/atoms';
 import * as Popover from '@radix-ui/react-popover';
-import { Pencil1Icon, TrashIcon, LoopIcon, ClockIcon, ArrowLeftIcon } from '@radix-ui/react-icons';
+import { Pencil1Icon, TrashIcon, LoopIcon, ClockIcon, ArrowLeftIcon, Cross2Icon } from '@radix-ui/react-icons';
 import { CalendarEvent, EVENT_COLORS } from '@/lib/types';
 import { format } from 'date-fns';
 import { formatEventTime, formatDateRange, isMultiDayEvent } from '@/lib/calendar-utils';
@@ -120,7 +120,7 @@ export default function EventDetailsPopover({ event, children }: EventDetailsPop
       </Popover.Trigger>
       <Popover.Portal>
         <Popover.Content
-          className="w-80 rounded-md border border-gray-200 bg-white shadow-lg focus:outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 overflow-hidden"
+          className="w-80 rounded-md border border-zinc-300 bg-white shadow-lg focus:outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 overflow-hidden"
           side="bottom"
           align="start"
           sideOffset={5}
@@ -143,7 +143,14 @@ export default function EventDetailsPopover({ event, children }: EventDetailsPop
                   >
                 {/* Event type badge and title */}
                 <div className="space-y-2">
-                <h3 className="text-lg font-semibold">{event.title}</h3>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold">{event.title}</h3>
+                  <Popover.Close asChild>
+                    <button className="rounded-md p-1 hover:bg-zinc-100" aria-label="Close">
+                      <Cross2Icon className="h-4 w-4 text-zinc-600" />
+                    </button>
+                  </Popover.Close>
+                </div>
                   <div className="flex flex-wrap gap-2">
                     <span
                       className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${colors.bg} ${colors.text}`}
@@ -151,7 +158,7 @@ export default function EventDetailsPopover({ event, children }: EventDetailsPop
                       {getEventTypeLabel(event.type)}
                     </span>
                     {event.recurrence && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs font-medium">
                         <LoopIcon className="h-3 w-3" />
                         Recurring
                       </span>
@@ -204,7 +211,7 @@ export default function EventDetailsPopover({ event, children }: EventDetailsPop
                 <div className="flex gap-2 pt-3 justify-end">
                   <button
                     onClick={handleEdit}
-                    className="flex items-center justify-center rounded-md border border-gray-300 px-3 py-2 text-sm font-medium hover:bg-gray-100"
+                    className="flex items-center justify-center rounded-md border border-zinc-300 px-3 py-2 text-sm font-medium hover:bg-zinc-100"
                   >
                     Edit
                   </button>
@@ -229,19 +236,19 @@ export default function EventDetailsPopover({ event, children }: EventDetailsPop
                 <div className="space-y-2">
                   <button
                     onClick={handleDeleteThisOnly}
-                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm font-medium hover:bg-gray-100 text-left"
+                    className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm font-medium hover:bg-zinc-100 text-left"
                   >
                     Delete this event only
                   </button>
                   <button
                     onClick={handleDeleteAll}
-                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm font-medium hover:bg-gray-100 text-left"
+                    className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm font-medium hover:bg-zinc-100 text-left"
                   >
                     Delete all of these events
                   </button>
                   <button
                     onClick={handleCancelDelete}
-                    className="w-full flex gap-2 items-center rounded-md border border-gray-300  px-3 py-2 text-sm font-medium hover:bg-gray-100 text-left"
+                    className="w-full flex gap-2 items-center rounded-md border border-zinc-300  px-3 py-2 text-sm font-medium hover:bg-zinc-100 text-left"
                   >
                     <ArrowLeftIcon /> Go Back
                   </button>

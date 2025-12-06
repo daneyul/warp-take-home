@@ -38,7 +38,7 @@ export default function DayView() {
   return (
     <div className="flex h-full flex-col">
       {/* Header */}
-      <div className="border-b border-gray-200 px-6 py-2">
+      <div className="border-b border-zinc-300 px-6 py-2">
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={format(currentDate, "yyyy-MM-dd")}
@@ -61,7 +61,7 @@ export default function DayView() {
             animate="center"
             exit="exit"
             transition={{ duration: 0.15, ease: "easeInOut" }}
-            className="text-sm font-medium"
+            className="text-sm font-bold"
           >
             {format(currentDate, "EEEE")}
           </motion.div>
@@ -70,7 +70,7 @@ export default function DayView() {
 
       {/* All-day events section */}
       {allDayEvents.length > 0 && (
-        <div className="border-b border-gray-200 px-6 py-3">
+        <div className="border-b border-zinc-300 px-6 py-3">
           <div className="text-xs font-semibold mb-2">All Day</div>
           <div className="space-y-1">
             {allDayEvents.map((event) => (
@@ -86,11 +86,11 @@ export default function DayView() {
       <div className="flex-1 overflow-auto">
         <div className="flex">
           {/* Time column */}
-          <div className="w-20 shrink-0 border-r border-gray-200">
+          <div className="w-20 shrink-0 border-r border-zinc-300">
             {HOURS.map((hour) => (
               <div
                 key={hour}
-                className="h-20 border-b border-gray-100 pl-6 pr-2 py-2"
+                className="h-20 border-b border-zinc-300 pl-6 pr-2 py-2"
               >
                 <div className="text-xs">
                   {hour === 0
@@ -108,7 +108,7 @@ export default function DayView() {
           {/* Events column */}
           <div className="relative flex-1">
             {HOURS.map((hour) => (
-              <div key={hour} className="h-20 border-b border-gray-100"></div>
+              <div key={hour} className="h-20 border-b border-zinc-300"></div>
             ))}
             {/* Events overlay */}
             <div className="pointer-events-none absolute inset-0 px-2">
@@ -238,7 +238,7 @@ const EventBlock = forwardRef<HTMLButtonElement, { event: EventWithLayout }>(
         ref={ref}
         type="button"
         {...props}
-        className={`event-block pointer-events-auto absolute overflow-hidden rounded-md border transition-all ${colors.bg} ${colors.bgHover} ${colors.text} ${colors.border}`}
+        className={`event-block pointer-events-auto absolute overflow-hidden rounded-md transition-all ${colors.bg} ${colors.bgHover} ${colors.text} ${colors.border}`}
         style={{
           top: `${top}px`,
           height: `${height}px`,
