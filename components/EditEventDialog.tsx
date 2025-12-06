@@ -221,7 +221,6 @@ export default function EditEventDialog() {
                     </div>
 
                     <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-                      {/* Title */}
                       <div>
                         <label htmlFor="title" className={formLabelClass}>
                           Event Title *
@@ -239,7 +238,6 @@ export default function EditEventDialog() {
                         />
                       </div>
 
-                      {/* Event Type */}
                       <div>
                         <label htmlFor="type" className={formLabelClass}>
                           Event Type *
@@ -283,7 +281,6 @@ export default function EditEventDialog() {
                         </div>
                       )}
 
-                      {/* All Day Toggle */}
                       <div className="flex items-center gap-2">
                         <input
                           type="checkbox"
@@ -303,13 +300,11 @@ export default function EditEventDialog() {
                         </label>
                       </div>
 
-                      {/* Date & Time Container */}
                       <div
                         className={
                           formData.isAllDay ? "flex gap-3" : "space-y-4"
                         }
                       >
-                        {/* Start Date & Time */}
                         <div
                           className={
                             formData.isAllDay
@@ -363,7 +358,6 @@ export default function EditEventDialog() {
                           )}
                         </div>
 
-                        {/* End Date & Time */}
                         <div
                           className={
                             formData.isAllDay
@@ -414,7 +408,6 @@ export default function EditEventDialog() {
                         </div>
                       </div>
 
-                      {/* Description */}
                       <div>
                         <label htmlFor="description" className={formLabelClass}>
                           Description
@@ -477,7 +470,6 @@ export default function EditEventDialog() {
                         </label>
                       </div>
 
-                      {/* Recurrence Settings */}
                       {formData.isRecurring && (
                         <div className="space-y-4 rounded-md border border-zinc-300 p-4">
                           <div>
@@ -507,7 +499,6 @@ export default function EditEventDialog() {
                             </select>
                           </div>
 
-                          {/* Days of Week (for weekly recurrence) */}
                           {formData.recurrenceFrequency === WEEKLY && (
                             <div>
                               <label className={formLabelClass}>
@@ -551,7 +542,6 @@ export default function EditEventDialog() {
                             </div>
                           )}
 
-                          {/* Recurrence End Date */}
                           <div>
                             <label
                               htmlFor="recurrenceEndDate"
@@ -575,7 +565,6 @@ export default function EditEventDialog() {
                         </div>
                       )}
 
-                      {/* Actions */}
                       <div className="flex justify-between gap-3 pt-4">
                         <button
                           type="button"
