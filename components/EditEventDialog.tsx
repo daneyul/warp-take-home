@@ -4,14 +4,22 @@ import { useState, useEffect } from 'react';
 import { useAtom } from 'jotai';
 import { eventsAtom, selectedEventAtom } from '@/lib/atoms';
 import * as Dialog from '@radix-ui/react-dialog';
-import { Cross2Icon, TrashIcon, LoopIcon } from '@radix-ui/react-icons';
+import * as Select from '@radix-ui/react-select';
+import { Cross2Icon, TrashIcon, LoopIcon, ArrowLeftIcon, ChevronDownIcon } from '@radix-ui/react-icons';
 import { CalendarEvent, EventType } from '@/lib/types';
 import { parseDateInUserTimezone, getUserTimezone } from '@/lib/timezone-utils';
 import { format } from 'date-fns';
+import { dialogOverlayClass, dialogContentClass } from '@/lib/dialog-styles';
+import { motion, AnimatePresence } from 'framer-motion';
+import useMeasure from 'react-use-measure';
 
 export default function EditEventDialog() {
   const [selectedEvent, setSelectedEvent] = useAtom(selectedEventAtom);
   const [events, setEvents] = useAtom(eventsAtom);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [ref, bounds] = useMeasure();
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [deleteClickedOnce, setDeleteClickedOnce] = useState(false);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -28,6 +36,8 @@ export default function EditEventDialog() {
   // Populate form when event is selected
   useEffect(() => {
     if (selectedEvent) {
+      setIsTransitioning(false);
+      setDeleteClickedOnce(false);
       setFormData({
         title: selectedEvent.title,
         type: selectedEvent.type,
@@ -73,14 +83,80 @@ export default function EditEventDialog() {
     setSelectedEvent(null);
   };
 
-  const handleDelete = () => {
+  const handleDeleteClick = () => {
     if (!selectedEvent) return;
-    setEvents(events.filter((e) => e.id !== selectedEvent.id));
+    if (selectedEvent.recurrence) {
+      setIsTransitioning(true);
+      setShowDeleteConfirm(true);
+    } else {
+      if (deleteClickedOnce) {
+        handleDeleteAll();
+      } else {
+        setDeleteClickedOnce(true);
+        setTimeout(() => {
+          setDeleteClickedOnce(false);
+        }, 2000);
+      }
+    }
+  };
+
+  const handleDeleteAll = () => {
+    if (!selectedEvent) return;
+
+    // For recurring events, extract the base ID and delete the base event
+    const match = selectedEvent.id.match(/^(.+)-(\d{4}-\d{2}-\d{2})$/);
+    const baseId = match ? match[1] : selectedEvent.id;
+
+    setEvents(events.filter((e) => e.id !== baseId));
     setSelectedEvent(null);
+    setShowDeleteConfirm(false);
+  };
+
+  const handleDeleteThisOnly = () => {
+    if (!selectedEvent) return;
+
+    // Extract the base event ID and date from the instance ID
+    // Instance IDs are formatted as: "base-id-YYYY-MM-DD"
+    const match = selectedEvent.id.match(/^(.+)-(\d{4}-\d{2}-\d{2})$/);
+    if (!match) {
+      // Not a recurring instance, just delete it
+      handleDeleteAll();
+      return;
+    }
+
+    const [, baseId, dateStr] = match;
+
+    // Find the original recurring event
+    const recurringEvent = events.find(e => e.id === baseId);
+    if (!recurringEvent || !recurringEvent.recurrence) {
+      handleDeleteAll();
+      return;
+    }
+
+    // Add this date to the exceptions list
+    const updatedEvent = {
+      ...recurringEvent,
+      recurrence: {
+        ...recurringEvent.recurrence,
+        exceptions: [...(recurringEvent.recurrence.exceptions || []), dateStr],
+      },
+    };
+
+    // Update the event in the array
+    setEvents(events.map(e => e.id === baseId ? updatedEvent : e));
+    setSelectedEvent(null);
+    setShowDeleteConfirm(false);
+  };
+
+  const handleCancelDelete = () => {
+    setIsTransitioning(true);
+    setShowDeleteConfirm(false);
   };
 
   const handleClose = () => {
     setSelectedEvent(null);
+    setShowDeleteConfirm(false);
+    setIsTransitioning(false);
   };
 
   if (!selectedEvent) return null;
@@ -88,29 +164,45 @@ export default function EditEventDialog() {
   return (
     <Dialog.Root open={!!selectedEvent} onOpenChange={(open) => !open && handleClose()}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 bg-black/50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
-        <Dialog.Content className="fixed left-[50%] top-[50%] max-h-[85vh] w-[90vw] max-w-[550px] translate-x-[-50%] translate-y-[-50%] overflow-auto rounded-lg bg-white p-6 shadow-lg focus:outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95">
-          <div className="flex items-center justify-between">
-            <Dialog.Title className="flex items-center gap-2 text-lg font-semibold text-gray-900">
-              Edit Event
-              {selectedEvent.recurrence && (
-                <span className="flex items-center gap-1 rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600">
-                  <LoopIcon className="h-3 w-3" />
-                  Recurring
-                </span>
-              )}
-            </Dialog.Title>
-            <Dialog.Close asChild>
-              <button className="rounded-md p-1 hover:bg-gray-100" aria-label="Close">
-                <Cross2Icon className="h-5 w-5 text-gray-500" />
-              </button>
-            </Dialog.Close>
-          </div>
+        <Dialog.Overlay className={dialogOverlayClass} />
+        <Dialog.Content className={dialogContentClass}>
+          <motion.div
+            initial={false}
+            animate={isTransitioning ? { height: bounds.height > 0 ? bounds.height : 'auto' } : {}}
+            transition={{ type: "spring", duration: 0.5, bounce: 0 }}
+            style={!isTransitioning ? { height: 'auto' } : undefined}
+          >
+            <div ref={ref}>
+              <AnimatePresence mode="wait" initial={false}>
+                {!showDeleteConfirm ? (
+                  <motion.div
+                    key="edit-form"
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ type: "spring", duration: 0.3, bounce: 0 }}
+                  >
+                <div className="flex items-center justify-between">
+                  <Dialog.Title className="flex items-center gap-2 text-lg font-semibold">
+                    Edit Event
+                    {selectedEvent.recurrence && (
+                      <span className="flex items-center gap-1 rounded-full bg-gray-100 px-2 py-1 text-xs font-medium">
+                        <LoopIcon className="h-3 w-3" />
+                        Recurring
+                      </span>
+                    )}
+                  </Dialog.Title>
+                  <Dialog.Close asChild>
+                    <button className="rounded-md p-1 hover:bg-gray-100" aria-label="Close">
+                      <Cross2Icon className="h-5 w-5" />
+                    </button>
+                  </Dialog.Close>
+                </div>
 
-          <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+                <form onSubmit={handleSubmit} className="mt-6 space-y-4">
             {/* Title */}
             <div>
-              <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="title" className="block text-sm font-medium">
                 Event Title *
               </label>
               <input
@@ -126,7 +218,7 @@ export default function EditEventDialog() {
 
             {/* Event Type */}
             <div>
-              <label htmlFor="type" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="type" className="block text-sm font-medium">
                 Event Type *
               </label>
               <select
@@ -152,16 +244,92 @@ export default function EditEventDialog() {
               formData.type === 'birthday' ||
               formData.type === 'work-anniversary') && (
               <div>
-                <label htmlFor="person" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="person" className="block text-sm font-medium">
                   Person
                 </label>
-                <input
-                  type="text"
-                  id="person"
+                <Select.Root
                   value={formData.person}
-                  onChange={(e) => setFormData({ ...formData, person: e.target.value })}
-                  className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                />
+                  onValueChange={(value) => setFormData({ ...formData, person: value })}
+                >
+                  <Select.Trigger
+                    id="person"
+                    className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 flex items-center justify-between"
+                  >
+                    <Select.Value placeholder="Select person" />
+                    <Select.Icon>
+                      <ChevronDownIcon className="h-4 w-4 opacity-50" />
+                    </Select.Icon>
+                  </Select.Trigger>
+                  <Select.Portal>
+                    <Select.Content className="min-w-(--radix-select-trigger-width) overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg z-50">
+                      <Select.Viewport className="p-1">
+                        <Select.Group>
+                          <Select.Label className="px-4 py-2 text-xs font-semibold text-gray-500">
+                            Engineering
+                          </Select.Label>
+                          <Select.Item
+                            value="Sarah Chen"
+                            className="relative flex cursor-pointer select-none items-center rounded-md px-4 py-2 text-sm outline-none data-highlighted:bg-gray-100 data-[state=checked]:bg-gray-200"
+                          >
+                            <Select.ItemText>Sarah Chen</Select.ItemText>
+                          </Select.Item>
+                          <Select.Item
+                            value="Alex Kim"
+                            className="relative flex cursor-pointer select-none items-center rounded-md px-4 py-2 text-sm outline-none data-highlighted:bg-gray-100 data-[state=checked]:bg-gray-200"
+                          >
+                            <Select.ItemText>Alex Kim</Select.ItemText>
+                          </Select.Item>
+                          <Select.Item
+                            value="Jordan Lee"
+                            className="relative flex cursor-pointer select-none items-center rounded-md px-4 py-2 text-sm outline-none data-highlighted:bg-gray-100 data-[state=checked]:bg-gray-200"
+                          >
+                            <Select.ItemText>Jordan Lee</Select.ItemText>
+                          </Select.Item>
+                        </Select.Group>
+
+                        <Select.Separator className="my-1 h-px bg-gray-200" />
+
+                        <Select.Group>
+                          <Select.Label className="px-4 py-2 text-xs font-semibold text-gray-500">
+                            Operations
+                          </Select.Label>
+                          <Select.Item
+                            value="Emma Wilson"
+                            className="relative flex cursor-pointer select-none items-center rounded-md px-4 py-2 text-sm outline-none data-highlighted:bg-gray-100 data-[state=checked]:bg-gray-200"
+                          >
+                            <Select.ItemText>Emma Wilson</Select.ItemText>
+                          </Select.Item>
+                          <Select.Item
+                            value="Marcus Rodriguez"
+                            className="relative flex cursor-pointer select-none items-center rounded-md px-4 py-2 text-sm outline-none data-highlighted:bg-gray-100 data-[state=checked]:bg-gray-200"
+                          >
+                            <Select.ItemText>Marcus Rodriguez</Select.ItemText>
+                          </Select.Item>
+                        </Select.Group>
+
+                        <Select.Separator className="my-1 h-px bg-gray-200" />
+
+                        <Select.Group>
+                          <Select.Label className="px-4 py-2 text-xs font-semibold text-gray-500">
+                            Design
+                          </Select.Label>
+                          <Select.Item
+                            value="Riley Patel"
+                            className="relative flex cursor-pointer select-none items-center rounded-md px-4 py-2 text-sm outline-none data-highlighted:bg-gray-100 data-[state=checked]:bg-gray-200"
+                          >
+                            <Select.ItemText>Riley Patel</Select.ItemText>
+                          </Select.Item>
+                          <Select.Item
+                            value="Taylor Morgan"
+                            className="relative flex cursor-pointer select-none items-center rounded-md px-4 py-2 text-sm outline-none data-highlighted:bg-gray-100 data-[state=checked]:bg-gray-200"
+                          >
+                            <Select.ItemText>Taylor Morgan</Select.ItemText>
+                          </Select.Item>
+                        </Select.Group>
+                      </Select.Viewport>
+                    </Select.Content>
+                  </Select.Portal>
+                </Select.Root>
               </div>
             )}
 
@@ -171,80 +339,86 @@ export default function EditEventDialog() {
                 type="checkbox"
                 id="allDay"
                 checked={formData.isAllDay}
-                onChange={(e) => setFormData({ ...formData, isAllDay: e.target.checked })}
+                onChange={(e) => {
+                  setIsTransitioning(true);
+                  setFormData({ ...formData, isAllDay: e.target.checked });
+                }}
                 className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
               />
-              <label htmlFor="allDay" className="text-sm font-medium text-gray-700">
+              <label htmlFor="allDay" className="text-sm font-medium">
                 All day event
               </label>
             </div>
 
-            {/* Start Date & Time */}
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">
-                  Start Date *
-                </label>
-                <input
-                  type="date"
-                  id="startDate"
-                  required
-                  value={formData.startDate}
-                  onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                  className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                />
-              </div>
-              {!formData.isAllDay && (
+            {/* Date & Time Container */}
+            <div className={formData.isAllDay ? "flex gap-3" : "space-y-4"}>
+              {/* Start Date & Time */}
+              <div className={formData.isAllDay ? "flex-1" : "grid grid-cols-2 gap-3"}>
                 <div>
-                  <label htmlFor="startTime" className="block text-sm font-medium text-gray-700">
-                    Start Time *
+                  <label htmlFor="startDate" className="block text-sm font-medium">
+                    Start Date *
                   </label>
                   <input
-                    type="time"
-                    id="startTime"
+                    type="date"
+                    id="startDate"
                     required
-                    value={formData.startTime}
-                    onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
+                    value={formData.startDate}
+                    onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
                     className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
-              )}
-            </div>
+                {!formData.isAllDay && (
+                  <div>
+                    <label htmlFor="startTime" className="block text-sm font-medium">
+                      Start Time *
+                    </label>
+                    <input
+                      type="time"
+                      id="startTime"
+                      required
+                      value={formData.startTime}
+                      onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
+                      className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    />
+                  </div>
+                )}
+              </div>
 
-            {/* End Date & Time */}
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label htmlFor="endDate" className="block text-sm font-medium text-gray-700">
-                  End Date
-                </label>
-                <input
-                  type="date"
-                  id="endDate"
-                  value={formData.endDate}
-                  onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                  className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                />
-              </div>
-              {!formData.isAllDay && (
+              {/* End Date & Time */}
+              <div className={formData.isAllDay ? "flex-1" : "grid grid-cols-2 gap-3"}>
                 <div>
-                  <label htmlFor="endTime" className="block text-sm font-medium text-gray-700">
-                    End Time *
+                  <label htmlFor="endDate" className="block text-sm font-medium">
+                    End Date
                   </label>
                   <input
-                    type="time"
-                    id="endTime"
-                    required
-                    value={formData.endTime}
-                    onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
+                    type="date"
+                    id="endDate"
+                    value={formData.endDate}
+                    onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
                     className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
-              )}
+                {!formData.isAllDay && (
+                  <div>
+                    <label htmlFor="endTime" className="block text-sm font-medium">
+                      End Time *
+                    </label>
+                    <input
+                      type="time"
+                      id="endTime"
+                      required
+                      value={formData.endTime}
+                      onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
+                      className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    />
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Description */}
             <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="description" className="block text-sm font-medium">
                 Description
               </label>
               <textarea
@@ -260,30 +434,65 @@ export default function EditEventDialog() {
             <div className="flex justify-between gap-3 pt-4">
               <button
                 type="button"
-                onClick={handleDelete}
-                className="flex items-center gap-2 rounded-md border border-red-300 bg-red-50 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-100"
+                onClick={handleDeleteClick}
+                className={`flex items-center justify-center rounded-md border border-red-300 bg-red-50 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-100 transition-all duration-300 ease-out overflow-hidden whitespace-nowrap ${deleteClickedOnce ? "w-48" : "w-20"}`}
               >
-                <TrashIcon className="h-4 w-4" />
-                Delete
+                {deleteClickedOnce ? "Click again to delete" : "Delete"}
               </button>
               <div className="flex gap-3">
                 <Dialog.Close asChild>
                   <button
                     type="button"
-                    className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                    className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-100"
                   >
                     Cancel
                   </button>
                 </Dialog.Close>
                 <button
                   type="submit"
-                  className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+                  className="rounded-md bg-black/80 px-4 py-2 text-sm font-medium text-white hover:bg-black/70"
                 >
                   Save Changes
                 </button>
               </div>
             </div>
           </form>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="delete-confirm"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ type: "spring", duration: 0.3, bounce: 0 }}
+                className="space-y-4"
+              >
+                <Dialog.Title className="text-lg font-semibold">Delete recurring event?</Dialog.Title>
+                <div className="space-y-2">
+                  <button
+                    onClick={handleDeleteThisOnly}
+                    className="w-full rounded-md border border-gray-300 px-4 py-3 text-sm font-medium hover:bg-gray-100 text-left"
+                  >
+                    Delete this event only
+                  </button>
+                  <button
+                    onClick={handleDeleteAll}
+                    className="w-full rounded-md border border-gray-300 px-4 py-3 text-sm font-medium hover:bg-gray-100 text-left"
+                  >
+                    Delete all of these events
+                  </button>
+                  <button
+                    onClick={handleCancelDelete}
+                    className="w-full flex gap-2 items-center rounded-md border border-gray-300 bg-gray-100 px-4 py-3 text-sm font-medium hover:bg-gray-100 text-left"
+                  >
+                    <ArrowLeftIcon /> Go Back
+                  </button>
+                </div>
+              </motion.div>
+            )}
+              </AnimatePresence>
+            </div>
+          </motion.div>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

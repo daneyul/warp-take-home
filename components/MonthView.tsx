@@ -2,7 +2,7 @@
 
 import { forwardRef } from 'react';
 import { useAtom } from 'jotai';
-import { currentDateAtom, filteredEventsAtom } from '@/lib/atoms';
+import { currentDateAtom, filteredEventsAtom, viewModeAtom } from '@/lib/atoms';
 import { getMonthViewDays, expandRecurringEvents, getEventsForDay } from '@/lib/calendar-utils';
 import { format, isSameMonth, startOfMonth, endOfMonth, isToday } from 'date-fns';
 import { CalendarEvent, EVENT_COLORS } from '@/lib/types';
@@ -12,6 +12,8 @@ import EventDetailsPopover from './EventDetailsPopover';
 export default function MonthView() {
   const [currentDate] = useAtom(currentDateAtom);
   const [events] = useAtom(filteredEventsAtom);
+  const [, setViewMode] = useAtom(viewModeAtom);
+  const [, setCurrentDate] = useAtom(currentDateAtom);
 
   const days = getMonthViewDays(currentDate);
   const monthStart = startOfMonth(currentDate);
@@ -30,9 +32,9 @@ export default function MonthView() {
   return (
     <div className="flex h-full flex-col">
       {/* Week day headers */}
-      <div className="grid grid-cols-7 border-b border-gray-200 bg-gray-50">
+      <div className="grid grid-cols-7 border-b border-gray-200">
         {weekDays.map((day) => (
-          <div key={day} className="border-r border-gray-200 px-2 py-3 text-center text-xs font-semibold text-gray-600 last:border-r-0">
+          <div key={day} className="border-r border-gray-200 p-2 text-center text-xs font-semibold last:border-r-0">
             {day}
           </div>
         ))}
@@ -50,22 +52,31 @@ export default function MonthView() {
                   const isCurrentMonth = isSameMonth(day, currentDate);
                   const isTodayDate = isToday(day);
 
+                  const handleDayClick = (e: React.MouseEvent) => {
+                    // Don't switch to day view if clicking on an event
+                    const target = e.target as HTMLElement;
+                    if (target.closest('button')) {
+                      return;
+                    }
+                    setCurrentDate(day);
+                    setViewMode('day');
+                  };
+
                   return (
                     <div
                       key={day.toISOString()}
-                      className={`relative border-b border-r border-gray-200 p-2 last:border-r-0 overflow-hidden ${
-                        isCurrentMonth ? 'bg-white' : 'bg-gray-50'
+                      onClick={handleDayClick}
+                      className={`relative border-b border-r border-gray-200 p-2 last:border-r-0 overflow-hidden cursor-pointer hover:bg-gray-50 transition-colors ${
+                        isCurrentMonth ? 'bg-white' : 'bg-gray-100'
                       }`}
                     >
                       {/* Date number */}
                       <div className="flex items-center justify-between mb-1">
                         <div
-                          className={`flex h-7 w-7 items-center justify-center rounded-full text-sm font-medium ${
+                          className={`flex h-5 w-5 items-center justify-center rounded-full text-xs font-medium ${
                             isTodayDate
-                              ? 'bg-blue-600 text-white'
-                              : isCurrentMonth
-                              ? 'text-gray-900'
-                              : 'text-gray-400'
+                              ? 'bg-black/80 text-white'
+                              : ''
                           }`}
                         >
                           {format(day, 'd')}
@@ -109,12 +120,12 @@ const EventPill = forwardRef<HTMLButtonElement, { event: CalendarEvent }>(
         ref={ref}
         type="button"
         {...props}
-        className={`group relative w-full truncate rounded px-1.5 py-0.5 text-left text-xs font-medium transition-all hover:opacity-80 hover:shadow-sm ${colors.bg} ${colors.text} ${isPartial ? 'border-l-2 ' + colors.border : ''}`}
+        className={`group relative w-full truncate rounded px-1.5 py-0.5 text-left text-xs font-medium transition-all ${colors.bg} ${colors.bgHover} ${colors.text}`}
         title={event.title}
       >
         <span className="flex items-center gap-1">
           {isPartial && <span className="text-[10px] opacity-70">⏱</span>}
-          {event.recurrence && <LoopIcon className="h-3 w-3 flex-shrink-0 opacity-75" />}
+          {event.recurrence && <LoopIcon className="h-3 w-3 shrink-0 opacity-75" />}
           {timeDisplay}
           <span className="truncate">{event.title}</span>
         </span>

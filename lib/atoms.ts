@@ -28,3 +28,6 @@ export const filteredEventsAtom = atom((get) => {
 
   return events.filter((event) => !filters.has(event.type));
 });
+
+// Navigation direction for animations (-1 for previous/left, 1 for next/right)
+export const navigationDirectionAtom = atom<number>(0);

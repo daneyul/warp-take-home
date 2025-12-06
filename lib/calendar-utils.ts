@@ -59,17 +59,18 @@ export function expandRecurringEvents(
       }
     } else {
       // Recurring event: generate instances
-      const { frequency, daysOfWeek, endDate } = event.recurrence;
+      const { frequency, daysOfWeek, endDate, exceptions = [] } = event.recurrence;
       const recurrenceEnd = endDate || rangeEnd;
 
       if (frequency === 'daily') {
         let currentDate = new Date(event.startTime);
         while (currentDate <= recurrenceEnd && currentDate <= rangeEnd) {
-          if (currentDate >= rangeStart) {
+          const dateStr = format(currentDate, 'yyyy-MM-dd');
+          if (currentDate >= rangeStart && !exceptions.includes(dateStr)) {
             const duration = event.endTime.getTime() - event.startTime.getTime();
             expanded.push({
               ...event,
-              id: `${event.id}-${format(currentDate, 'yyyy-MM-dd')}`,
+              id: `${event.id}-${dateStr}`,
               startTime: new Date(currentDate),
               endTime: new Date(currentDate.getTime() + duration),
             });
@@ -79,11 +80,12 @@ export function expandRecurringEvents(
       } else if (frequency === 'weekly' && daysOfWeek) {
         let currentDate = new Date(event.startTime);
         while (currentDate <= recurrenceEnd && currentDate <= rangeEnd) {
-          if (currentDate >= rangeStart && daysOfWeek.includes(currentDate.getDay())) {
+          const dateStr = format(currentDate, 'yyyy-MM-dd');
+          if (currentDate >= rangeStart && daysOfWeek.includes(currentDate.getDay()) && !exceptions.includes(dateStr)) {
             const duration = event.endTime.getTime() - event.startTime.getTime();
             expanded.push({
               ...event,
-              id: `${event.id}-${format(currentDate, 'yyyy-MM-dd')}`,
+              id: `${event.id}-${dateStr}`,
               startTime: new Date(currentDate),
               endTime: new Date(currentDate.getTime() + duration),
             });

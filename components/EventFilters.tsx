@@ -34,7 +34,7 @@ export default function EventFilters() {
   return (
     <Popover.Root>
       <Popover.Trigger asChild>
-        <button className="relative inline-flex items-center gap-2 rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50">
+        <button className="relative inline-flex items-center gap-2 rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium hover:bg-gray-100">
           <MixerHorizontalIcon className="h-4 w-4" />
           Filter
           {activeFilterCount > 0 && (
@@ -52,8 +52,8 @@ export default function EventFilters() {
         >
           <div className="space-y-4">
             <div>
-              <h3 className="text-sm font-semibold text-gray-900">Filter by Event Type</h3>
-              <p className="mt-1 text-xs text-gray-500">Hide selected event types from the calendar</p>
+              <h3 className="text-sm font-semibold">Filter by Event Type</h3>
+              <p className="mt-1 text-xs">Hide selected event types from the calendar</p>
             </div>
 
             <div className="space-y-3">
@@ -78,7 +78,7 @@ export default function EventFilters() {
                       className="flex flex-1 cursor-pointer items-center gap-2"
                     >
                       <span className={`h-3 w-3 rounded ${colors.bg} ${colors.border} border`}></span>
-                      <span className="text-sm text-gray-700">{eventType.label}</span>
+                      <span className="text-sm">{eventType.label}</span>
                     </label>
                   </div>
                 );
@@ -88,7 +88,7 @@ export default function EventFilters() {
             {activeFilterCount > 0 && (
               <button
                 onClick={() => setFilters(new Set())}
-                className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium hover:bg-gray-100"
               >
                 Clear all filters
               </button>

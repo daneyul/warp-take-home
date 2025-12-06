@@ -45,5 +45,66 @@
 
 body {
   background: var(--background);
-  color: var(--foreground);
+  color: rgb(0 0 0 / 0.8);
+}
+
+@layer base {
+  button {
+    cursor: pointer;
+    transition: transform 150ms;
+  }
+  
+  button:active:not(.event-pill):not(.event-block) {
+    transform: scale(0.97);
+  }
+  
+  button.event-pill:active,
+  button.event-block:active {
+    transform: scale(1) !important;
+  }
+}
+
+/* Custom animation keyframes for dialogs */
+/* Overlay animations - opacity only */
+@keyframes fade-in-overlay {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out-overlay {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Content animations - scale */
+@keyframes animate-in {
+  from {
+    transform: scale(0.97);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes animate-out {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+/* Register animations in Tailwind v4 theme */
+@theme {
+  --animate-overlay-in: fade-in-overlay 150ms ease-out;
+  --animate-in: animate-in 150ms ease-out;
 }
