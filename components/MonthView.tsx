@@ -124,7 +124,6 @@ const EventPill = forwardRef<HTMLButtonElement, { event: CalendarEvent }>(
         title={event.title}
       >
         <span className="flex items-center gap-1">
-          {isPartial && <span className="text-[10px] opacity-70">⏱</span>}
           {event.recurrence && <LoopIcon className="h-3 w-3 shrink-0 opacity-75" />}
           {timeDisplay}
           <span className="truncate">{event.title}</span>

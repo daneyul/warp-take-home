@@ -72,8 +72,6 @@ body {
   }
 }
 
-/* Custom animation keyframes for dialogs */
-/* Overlay animations - opacity only */
 @keyframes fade-in-overlay {
   from {
     opacity: 0;

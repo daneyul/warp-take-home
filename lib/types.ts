@@ -13,6 +13,8 @@ export type EventSubtype =
   | 'planning'
   | 'all-hands';
 
+export type RecurrenceFrequency = 'daily' | 'weekly' | 'monthly';
+
 export interface CalendarEvent {
   id: string;
   title: string;
@@ -26,7 +28,7 @@ export interface CalendarEvent {
   isPartialDay?: boolean; // For half-day time off (e.g., morning only, afternoon only)
   timezone?: string; // IANA timezone (e.g., 'America/New_York')
   recurrence?: {
-    frequency: 'daily' | 'weekly' | 'monthly';
+    frequency: RecurrenceFrequency;
     daysOfWeek?: number[]; // 0 = Sunday, 1 = Monday, etc.
     endDate?: Date;
     exceptions?: string[]; // ISO date strings of excluded dates (e.g., '2024-01-15')

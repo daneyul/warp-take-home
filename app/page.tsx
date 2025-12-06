@@ -7,6 +7,7 @@ import MonthView from '@/components/MonthView';
 import DayView from '@/components/DayView';
 import EditEventDialog from '@/components/EditEventDialog';
 import LeftSidebar from '@/components/LeftSidebar';
+import { DAY, MONTH } from '@/lib/constants/event-types';
 
 export default function Home() {
   const [viewMode] = useAtom(viewModeAtom);
@@ -15,19 +16,15 @@ export default function Home() {
     <>
       <EditEventDialog />
       <div className="flex h-screen">
-        {/* Left Sidebar */}
         <LeftSidebar />
-
-        {/* Main Calendar Area */}
         <div className="flex flex-1 flex-col overflow-hidden">
           <div
-            className="flex flex-1 flex-col overflow-hidden bg-white"
-            style={{ borderColor: 'rgba(0, 0, 0, 0.08)' }}
+            className="flex flex-1 flex-col overflow-hidden bg-white border-zinc-300"
           >
             <CalendarHeader />
             <div className="flex-1 overflow-auto">
-              {viewMode === 'month' && <MonthView />}
-              {viewMode === 'day' && <DayView />}
+              {viewMode === MONTH && <MonthView />}
+              {viewMode === DAY && <DayView />}
             </div>
           </div>
         </div>

@@ -1,31 +1,21 @@
 import { toZonedTime, fromZonedTime } from 'date-fns-tz';
 
-/**
- * Get the user's local timezone
- */
 export function getUserTimezone(): string {
   return Intl.DateTimeFormat().resolvedOptions().timeZone;
 }
 
-/**
- * Convert a UTC date to the user's local timezone
- */
+// use utc
 export function toUserTimezone(date: Date, timezone?: string): Date {
   const userTz = timezone || getUserTimezone();
   return toZonedTime(date, userTz);
 }
 
-/**
- * Convert a local date to UTC for storage
- */
+// convert to utc
 export function toUTC(date: Date, timezone?: string): Date {
   const userTz = timezone || getUserTimezone();
   return fromZonedTime(date, userTz);
 }
 
-/**
- * Create a UTC date from local date components
- */
 export function createUTCDate(
   year: number,
   month: number,
@@ -39,11 +29,6 @@ export function createUTCDate(
   return fromZonedTime(localDate, userTz);
 }
 
-/**
- * Parse a date string in the user's timezone and convert to UTC
- * Useful for form inputs (date-time pickers)
- * For all-day events (no timeString), uses noon UTC to prevent timezone shifting
- */
 export function parseDateInUserTimezone(dateString: string, timeString?: string): Date {
   const userTz = getUserTimezone();
 
@@ -61,11 +46,8 @@ export function parseDateInUserTimezone(dateString: string, timeString?: string)
   return fromZonedTime(localDate, userTz);
 }
 
-/**
- * Format a UTC date for display in the user's timezone
- */
-export function formatInUserTimezone(date: Date, formatStr: string): string {
+export function formatInUserTimezone(date: Date): string {
   const userTz = getUserTimezone();
   const zonedDate = toZonedTime(date, userTz);
-  return zonedDate.toLocaleString(); // Can enhance this with date-fns format
+  return zonedDate.toLocaleString();
 }

@@ -6,15 +6,7 @@ import * as Popover from '@radix-ui/react-popover';
 import * as Checkbox from '@radix-ui/react-checkbox';
 import { MixerHorizontalIcon, CheckIcon } from '@radix-ui/react-icons';
 import { EventType, EVENT_COLORS } from '@/lib/types';
-
-const EVENT_TYPES: { value: EventType; label: string }[] = [
-  { value: 'meeting', label: 'Meetings' },
-  { value: 'company-event', label: 'Company Events' },
-  { value: 'time-off', label: 'Time Off' },
-  { value: 'birthday', label: 'Birthdays' },
-  { value: 'work-anniversary', label: 'Work Anniversaries' },
-  { value: 'deadline', label: 'Deadlines' },
-];
+import { EVENT_TYPE_CONFIGS } from '@/lib/constants/event-types';
 
 export default function EventFilters() {
   const [filters, setFilters] = useAtom(eventTypeFiltersAtom);
@@ -57,7 +49,7 @@ export default function EventFilters() {
             </div>
 
             <div className="space-y-3">
-              {EVENT_TYPES.map((eventType) => {
+              {EVENT_TYPE_CONFIGS.map((eventType) => {
                 const isChecked = filters.has(eventType.value);
                 const colors = EVENT_COLORS[eventType.value];
 
@@ -94,7 +86,6 @@ export default function EventFilters() {
               </button>
             )}
           </div>
-          <Popover.Arrow className="fill-white" />
         </Popover.Content>
       </Popover.Portal>
     </Popover.Root>
